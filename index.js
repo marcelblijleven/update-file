@@ -37,6 +37,7 @@ async function executeAction() {
             content: encodedContents,
             owner: owner,
             repo: repo,
+            path: file,
             sha: getResult.data.sha
         }
 
