@@ -26,7 +26,7 @@ async function executeAction() {
             getContentsParams.branch = branch;
         }
 
-        const sha = await octokit.repos.getContents(getContentsParams);
+        const getResult = await octokit.repos.getContents(getContentsParams);
         
         const createOrUpdateFileParams = {
             committer: { email: committerEmail, name: committerName },
@@ -35,15 +35,15 @@ async function executeAction() {
             owner: owner,
             path: file,
             repo: repo,
-            sha: sha
+            sha: getResult.data.sha
         }
 
         if (branch.length > 0) {
             createOrUpdateFileParams.branch = branch;
         }
         
-        const resultSha = await octokit.repos.createOrUpdateFile(createOrUpdateFileParams);
-        core.setOutput('sha', resultSha);
+        const updateResult = await octokit.repos.createOrUpdateFile(createOrUpdateFileParams);
+        core.setOutput('sha', updateResult.data.commit.sha);
     } catch (error) {
         core.setFailed(error.message);
     }
