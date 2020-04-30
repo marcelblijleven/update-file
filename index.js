@@ -28,21 +28,25 @@ async function executeAction() {
 
         const getResult = await octokit.repos.getContents(getContentsParams);
         
-        const createOrUpdateFileParams = {
-            committer: { email: committerEmail, name: committerName },
-            content: encodedContents,
+        const corParams = {
             message: message,
+            committer: {
+                name: committerName,
+                email: committerEmail,
+            },
+            content: encodedContents,
             owner: owner,
-            path: file,
             repo: repo,
             sha: getResult.data.sha
         }
+
+        core.debug(JSON.stringify(corParams));
 
         if (branch.length > 0) {
             createOrUpdateFileParams.branch = branch;
         }
         
-        const updateResult = await octokit.repos.createOrUpdateFile(createOrUpdateFileParams);
+        const updateResult = await octokit.repos.createOrUpdateFile(corParams);
         core.setOutput('sha', updateResult.data.commit.sha);
     } catch (error) {
         core.setFailed(error.message);
